@@ -5,15 +5,27 @@
 	<!--id값은 dao에 선언되어있는 값과 동일하게 설정-->
 	<select id="getTodoList" resultType="TodoDTO">
 		SELECT * FROM todolist
+		ORDER BY id
 	</select>
 
 
+	<insert id="insertTodoList" parameterType="TodoDTO">
+		INSERT INTO todolist(id, todoname)
+		VALUES(todo_id_seq.nextval, #{todoname})
+	</insert>
 
 
+	<update id="updateTodoList" parameterType="TodoDTO">
+		UPDATE todolist
+		SET completed = #{completed}
+		WHERE id=#{id}
+	</update>
 
-
-
-
+	
+	<delete id="deleteTodoList" parameterType="int">
+		DELETE FROM todolist
+		WHERE id=#{id}
+	</delete>
 
 </mapper>
 
