@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class FileUpload {
 		
-		public static UUID saveCopyFile(MultipartFile file, HttpServletRequest request) {
+		public static UUID saveCopyFile(MultipartFile file, String filePath) {
 			String fileName = file.getOriginalFilename();
 			
 			
@@ -22,7 +22,9 @@ public class FileUpload {
 			UUID random = UUID.randomUUID();
 						
 			
-			File ff = new File(urlPath(request), random + "_" + fileName);
+			//File ff = new File(urlPath(filePath), random + "_" + fileName);
+			
+			File ff = new File(filePath, random + "_" + fileName);
 			
 			try {
 				FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(ff));

@@ -28,7 +28,7 @@ public class BoardController {
 	private BoardService boardService;
 	
 	@Value("${spring.servlet.multipart.location")
-	private String filename; //넘어오는 첨부파일을 value의 주소에 저장하겠다는 뜻(application properties)
+	private String filePath; //넘어오는 첨부파일을 value의 주소에 저장하겠다는 뜻(application properties)
 
 	@Autowired
 	private PageDTO pdto;
@@ -76,7 +76,7 @@ public class BoardController {
 		//System.out.println("file:" + file.getOriginalFilename());
 		
 		if (!file.isEmpty()) { // 첨부파일이 있으면...
-			UUID random = FileUpload.saveCopyFile(file, req); // 첨부파일에 대한 정보 가져옴
+			UUID random = FileUpload.saveCopyFile(file, filePath); // 첨부파일에 대한 정보 가져옴
 			dto.setUpload(random + "_" + file.getOriginalFilename());
 
 		}
