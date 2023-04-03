@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.shop.board.dao.BoardDAO">
+
+	<select id="count" resultType="int">
+		SELECT count(*) FROM board
+	</select>
+
+
+	<!--	<resultMap type="board.dto.BoardDTO" id="listSelect"
+	autoMapping="true">
+		<association property="membersDTO"
+	javaType="members.dto.MembersDTO">
+			<result column="memberName"
+	property="memberName" />
+		</association>
+	</resultMap>
+
+
+	<select
+	id="list" parameterType="board.dto.PageDTO" resultMap="listSelect">
+	<![CDATA[
+		SELECT b.*
+			FROM(SELECT rownum AS rm, a.*
+				FROM (SELECT
+	b.*, m.memberName
+					FROM board b, members m
+					WHERE
+	b.email=m.memberEmail(+)
+					ORDER BY ref DESC, re_step ASC)a)b
+			WHERE
+	b.rm>=#{startRow} AND b.rm<=#{endRow}
+		]]>
+	</select>
+-->
+
+
+	<!-- 목록 불러오기 -->
+	<select id="list" parameterType="PageDTO" resultType="BoardDTO">
+		<![CDATA[
+		SELECT b.*
+			FROM(SELECT rownum AS rm, a.*
+				FROM (SELECT b.* FROM board b
+					ORDER BY ref DESC, re_step ASC)a)b
+			WHERE b.rm>=#{startRow} AND b.rm<=#{endRow}
+		]]>
+	</select>
+
+
+	<!-- 게시물 삽입 -->
+	<insert id="save" parameterType="BoardDTO"> 
+		INSERT INTO board(num, subject,
+		reg_date, readcount, ref, re_step, re_level, content, ip, upload)
+		VALUES(board_num_seq.nextval, #{subject}, sysdate, 0, <choose>
+			<when test="ref==0"> board_num_seq.nextval, </when>
+			<otherwise> #{ref}, </otherwise>
+		</choose>
+		#{re_step}, #{re_level}, #{content, jdbcType=VARCHAR}, #{ip}, #{upload,
+		jdbcType=VARCHAR}) </insert>
+
+
+	<!--<update id="readCount" parameterType="int">
+		UPDATE board
+		SET readCount =
+		readCount + 1
+		WHERE num = #{num}
+	</update>
+
+
+	<resultMap type="board.dto.BoardDTO" id="contentSelect" autoMapping="true">
+		<association property="membersDTO" javaType="members.dto.MembersDTO">
+			<result column="memberName" property="memberName" />
+		</association>
+	</resultMap>
+
+
+	<select id="content" parameterType="int" resultMap="contentSelect"> SELECT
+		b.*, m.memberName FROM board b, members m WHERE
+		b.memberEmail=m.memberEmail(+) AND num=#{num}  중복 방지 
+	</select>
+
+
+	<update id="reStepCount" parameterType="board.dto.BoardDTO"> UPDATE board
+		SET re_step = re_step + 1  (=) 할당의 의미  WHERE ref=#{ref} AND re_step > #{re_step} 
+		(=) 비교의 의미 
+	</update>
+
+
+	<update id="update" parameterType="board.dto.BoardDTO"> UPDATE board SET
+		subject=#{subject}, content=#{content} <if test="upload != null">
+		,upload=#{upload}
+		</if> WHERE num = #{num} </update>
+
+
+	<select id="getFile" parameterType="int" resultType="string">
+		SELECT upload
+		FROM board
+		WHERE num=#{num}
+	</select>
+
+
+	<delete id="delete" parameterType="int">
+		DELETE FROM board
+		WHERE num=#{num}
+	</delete>
+
+-->
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

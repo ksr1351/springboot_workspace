@@ -16,3 +16,13 @@ NOCYCLE;
 INSERT INTO todolist VALUES(todo_id_seq.nextval, 0, '여행');
 commit;
 SELECT * FROM todolist;
+
+
+select * from todolist;
+
+delete from todolist
+where id=17;
+commit;
+
+
+select * from board;
