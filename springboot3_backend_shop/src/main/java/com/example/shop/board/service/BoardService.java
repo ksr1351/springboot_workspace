@@ -14,7 +14,7 @@ public interface BoardService {
 
 	public BoardDTO contentProcess(int num);
 
-	public BoardDTO updateSelectProcess(int num);
+//	public BoardDTO updateSelectProcess(int num);
 
 	public void updateProcess(BoardDTO dto, String urlpath);
 
