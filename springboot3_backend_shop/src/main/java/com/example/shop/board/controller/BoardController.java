@@ -65,7 +65,7 @@ public class BoardController {
 		int totalRecord = boardService.countProcess();
 		if (totalRecord >= 1) {
 			// if (pv.getCurrentPage() == 0)
-			this.currentPage = 1;
+			this.currentPage = currentPage;
 			// else
 			// this.currentPage = pv.getCurrentPage();
 
