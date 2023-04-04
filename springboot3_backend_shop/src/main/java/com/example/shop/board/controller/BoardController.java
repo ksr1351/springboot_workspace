@@ -2,6 +2,10 @@ package com.example.shop.board.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -11,6 +15,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +32,9 @@ import com.example.shop.board.dto.BoardDTO;
 import com.example.shop.board.dto.PageDTO;
 import com.example.shop.board.service.BoardService;
 import com.example.shop.common.file.FileUpload;
+
+//@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin("*")
 
 @RestController
 public class BoardController {
@@ -41,8 +53,8 @@ public class BoardController {
 	public BoardController() {
 
 	}
-	
-	//@PathVariable => HTTP요청 URI의 일부분을 변수로 사용하기 위해 사용됨(URI변수를 매개변수로 사용)
+
+	// @PathVariable => HTTP요청 URI의 일부분을 변수로 사용하기 위해 사용됨(URI변수를 매개변수로 사용)
 
 	// http://localhost:8090/board/list/1
 
@@ -103,64 +115,56 @@ public class BoardController {
 		// return "redirect:/board/list.do";
 	}
 
-	//게시물 내용 가져오기
+	// 게시물 내용 가져오기
 	@GetMapping("/board/view/{num}")
 	public BoardDTO viewExecute(@PathVariable("num") int num) {
-		
-		return boardService.contentProcess(num); //여기서 반환된 결과가 BoardDTO 객체여야함
 
-		
+		return boardService.contentProcess(num); // 여기서 반환된 결과가 BoardDTO 객체여야함
+
 	}
-	
-	//게시물 수정하기 
-	@PutMapping("/board/update") //수정은 put
+
+	// 게시물 수정하기
+	@PutMapping("/board/update") // 수정은 put
 	public void updateExecute(BoardDTO dto, HttpServletRequest request) throws IllegalStateException, IOException {
-		MultipartFile file = dto.getFilename(); //BoardDTO 객체에서 첨부파일 정보 가져오기
-		if(!file.isEmpty()) { // 첨부파일이 존재한다면
+		MultipartFile file = dto.getFilename(); // BoardDTO 객체에서 첨부파일 정보 가져오기
+		if (!file.isEmpty()) { // 첨부파일이 존재한다면
 			UUID random = FileUpload.saveCopyFile(file, filePath);
 			dto.setUpload(random + "_" + file.getOriginalFilename());
-			//d:\\download\\temp 경로에 첨부파일 저장
-			file.transferTo(new File(random + "_" + file.getOriginalFilename())); //new File()은 새로운 객체를 생성하기 위해 사용됨
+			// d:\\download\\temp 경로에 첨부파일 저장
+			file.transferTo(new File(random + "_" + file.getOriginalFilename())); // new File()은 새로운 객체를 생성하기 위해 사용됨
 		}
-		
-		boardService.updateProcess(dto, filePath); //게시글 정보를 업데이트 / BoardDTO 객체와 파일 경로(filePath)를 인자로 전달
-	
+
+		boardService.updateProcess(dto, filePath); // 게시글 정보를 업데이트 / BoardDTO 객체와 파일 경로(filePath)를 인자로 전달
+
 	}
 
-	
-	//게시물 삭제
+	// 게시물 삭제
 	@DeleteMapping("/board/delete/{num}")
 	public void deleteExecute(@PathVariable("num") int num, HttpServletRequest request) {
-		boardService.deleteProcess(num, filePath); //첨부파일이 삭제되었는지까지 확인하기
+		boardService.deleteProcess(num, filePath); // 첨부파일이 삭제되었는지까지 확인하기
 
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	// 첨부파일 다운로드 받기
+	@GetMapping("/board/contentdownload/{filename}")
+	public ResponseEntity<Resource> downloadExecute(@PathVariable("filename") String filename) throws IOException {
+		
+		String fileName = filename.substring(filename.indexOf("_") + 1);
+		
+		//파일명이 한글일 때 인코딩 작업을 한다.
+		String str = URLEncoder.encode(fileName, "UTF-8");
+		//원본 파일명에서 공백이 있을 때, +로 표시가 되므로 공백으로 처리해줌
+		str = str.replaceAll("\\+", "%20");
+		Path path = Paths.get(filePath+"\\" + filename);
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		System.out.println("resource:" + resource.getFilename());
+		
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename="+str+";")
+				.body(resource);
+				
+
+	}
+
 }// end class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
