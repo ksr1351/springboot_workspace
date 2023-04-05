@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component //class를 bean으로 설정하기 위해 선언(lombok을 사용할 경우 필요없음)
 public class BoardDTO {
 	private int num, readcount, ref, re_step, re_level;
-	private String subject, content, ip, email;
+	private String subject, content, ip, memberEmail;
 	private Date reg_date;
 //	private MembersDTO membersDTO;
 
@@ -95,13 +95,6 @@ public class BoardDTO {
 		this.ip = ip;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	public Date getReg_date() {
 		return reg_date;
@@ -125,6 +118,14 @@ public class BoardDTO {
 
 	public void setFilename(MultipartFile filename) {
 		this.filename = filename;
+	}
+
+	public String getMemberEmail() {
+		return memberEmail;
+	}
+
+	public void setMemberEmail(String memberEmail) {
+		this.memberEmail = memberEmail;
 	}
 
 }

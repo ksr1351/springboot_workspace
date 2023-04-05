@@ -90,7 +90,7 @@ public class BoardController {
 
 		// System.out.println("file:" + file.getOriginalFilename());
 
-		if (!file.isEmpty()) { // 첨부파일이 있으면...
+		if (file!=null && !file.isEmpty()) { // 첨부파일이 있으면...
 			UUID random = FileUpload.saveCopyFile(file, filePath); // 첨부파일에 대한 정보 가져옴
 			dto.setUpload(random + "_" + file.getOriginalFilename());
 
@@ -127,7 +127,7 @@ public class BoardController {
 	@PutMapping("/board/update") // 수정은 put
 	public void updateExecute(BoardDTO dto, HttpServletRequest request) throws IllegalStateException, IOException {
 		MultipartFile file = dto.getFilename(); // BoardDTO 객체에서 첨부파일 정보 가져오기
-		if (!file.isEmpty()) { // 첨부파일이 존재한다면
+		if (file!=null && !file.isEmpty()) { // 첨부파일이 없거나 존재한다면 
 			UUID random = FileUpload.saveCopyFile(file, filePath);
 			dto.setUpload(random + "_" + file.getOriginalFilename());
 			// d:\\download\\temp 경로에 첨부파일 저장
