@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.example.shop.members.dao.MembersDAO;
 import com.example.shop.security.jwt.JwtAuthenticationFilter;
 import com.example.shop.security.jwt.JwtAutorizationFilter;
+import com.example.shop.security.service.CorsConfig;
 
 @Configuration
 @EnableWebSecurity // SpringSecurityFilterChain에 등록 /gradle에 등록해둔 jwt 사용하기 위해
@@ -30,6 +31,9 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+	@Autowired
+	private CorsConfig corsConfig;
+	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
