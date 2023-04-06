@@ -3,6 +3,7 @@ package com.example.shop.security.jwt;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.FilterChain;
@@ -10,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -91,14 +94,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(response.getOutputStream(), body);
-		
-		super.successfulAuthentication(request, response, chain, authResult);
+
 	}
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) throws IOException, ServletException {
 		System.out.println("unsuccess");
-		super.unsuccessfulAuthentication(request, response, failed);
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("code", HttpStatus.UNAUTHORIZED.value());
+        body.put("error", failed.getMessage());
+
+
+        new ObjectMapper().writeValue(response.getOutputStream(), body);
+
+
 	}
 }// end class

@@ -37,11 +37,6 @@ public class MembersController {
 		return null;
 	}
 
-	// 로그인
-	@PostMapping("/member/login")
-	public String loginMember(MembersDTO membersDTO) {
-		return null;
 
-	}
 
 }// end class
