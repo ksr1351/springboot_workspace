@@ -1,5 +1,0 @@
-#server
-server.port=8090
-
-#서버를 자동적으로 재시작
-spring.devtools.livereload.enabled=true

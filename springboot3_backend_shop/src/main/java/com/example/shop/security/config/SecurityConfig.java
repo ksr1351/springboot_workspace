@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.example.shop.members.dao.MembersDAO;
 import com.example.shop.security.jwt.JwtAuthenticationFilter;
-import com.example.shop.security.jwt.JwtAutorizationFilter;
+import com.example.shop.security.jwt.JwtAuthorizationFilter;
 import com.example.shop.security.service.CorsConfig;
 
 @Configuration
@@ -43,14 +43,23 @@ public class SecurityConfig {
 		
 		// API를 사용하므로 기본으로 제공하는 formLogin()페이지 끄기
 		http.formLogin().disable();
+		
 		//httpBasic 방식 대신 JWT를 사용하기 때문에 httpBasic() 끄기
 		http.httpBasic().disable();
 
+		
 		// 세션끄기 : JWT를 사용하기 때문에 세션을 사용하지 않는다.
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
 		//인증 사용, security Filter에 등록, @CrossOrigin (인증 x)
 		http.apply(new MycustomerFilter());
+		
+		//요청에 의한 인가(권한)검사 시작
+		http.authorizeHttpRequests()
+		.antMatchers("/", "/images/**", "/login", "/board/list/**", "/member/signup").permitAll() //로그인 없이 접근 허용한다.
+		.anyRequest().authenticated(); //그 외 모든 요청에 대해서 인증(로그인)이 되어야 허용한다.
+		
+		
 
 		return http.build();
 	}
@@ -61,30 +70,17 @@ public class SecurityConfig {
 		public void configure(HttpSecurity http) throws Exception {
 			AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class); //AuthenticationManager => 인증값 관리하는 곳
 			
+			// @CrossOrigin(인증 x) , security Filter에 등록 인증(o)
+			http.addFilter((corsConfig.corsFilter())); //응답과 관련있는 소스 / 설정안되어있을 때 콘솔에서 200에러 / CorsConfig 소스가 있어야함
+			
 			//addFilter() : FilterComparator에 등록되어 있는 Filter들을 활성화할 때 사용
 			//addFilterBefore(), addFilterAfter() : CustomerFilter를 등록할 때 사용
 			//인증 필터 등록
 			http.addFilter(new JwtAuthenticationFilter(authenticationManager))
 			//인가(권한) 필터 등록
-			.addFilter(new JwtAutorizationFilter(authenticationManager, userRepository));
+			.addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository));
 		}
 	}
 }//end outer class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
