@@ -1,8 +1,12 @@
 package com.example.shop.members.controller;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +41,20 @@ public class MembersController {
 		return null;
 	}
 
+	//회원정보 가져오기
+	@GetMapping("/member/editinfo/{memberEmail}") //{memberEmail}을 선언해주어야 @PathVariable("memberEmail") 이 값을 받아옴 
+	public MembersDTO getMember(@PathVariable("memberEmail") String memberEmail) {
+		
+		return membersService.updateMemberProcess(memberEmail);
+		
+	}
+	
+	//회원정보 수정
+	@PostMapping("/member/update")
+	public void updateMember(@RequestBody MembersDTO membersDTO) {
+		membersDTO.setMemberPass(encodePassword.encode(membersDTO.getMemberPass()));
+		membersService.updateMemberProcess(membersDTO);
+	}
 
 
 }// end class

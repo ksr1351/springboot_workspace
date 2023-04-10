@@ -14,6 +14,7 @@
 		]]>
 	</insert>
 
+	<!-- 회원정보 가져오기-->
 	<select id="selectByEmail" parameterType="string" resultType="MembersDTO">
 		SELECT * FROM members
 		WHERE memberEmail = #{memberEmail}
@@ -32,15 +33,6 @@
 		UPDATE members SET memberPass=#{memberPass}
 		WHERE memberEmail = #{memberEmail}
 	</update>
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
